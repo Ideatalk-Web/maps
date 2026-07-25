@@ -49,7 +49,7 @@
 <body>
 
 <div class="title">
-  My Satellite Map
+  Ideamaps
 </div>
 
 <div id="map"></div>
@@ -67,16 +67,10 @@ const map = L.map('map').setView([39.9334, 32.8597], 6);
 
 
 // Normal map
-const street = L.tileLayer(
-  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap contributors'
-  }
-);
+const map = L.map('map').setView([39.9334, 32.8597], 6);
 
 
-// Satellite map
+// Satellite imagery
 const satellite = L.tileLayer(
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
   {
@@ -86,17 +80,33 @@ const satellite = L.tileLayer(
 );
 
 
-street.addTo(map);
+// Street labels overlay
+const labels = L.tileLayer(
+  'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom: 19,
+    transparent: true,
+    attribution: 'Labels © Esri'
+  }
+);
 
 
-// Layer switch button
-const layers = {
-  "Street": street,
-  "Satellite": satellite
-};
+// Create hybrid layer group
+const hybrid = L.layerGroup([
+  satellite,
+  labels
+]);
 
-L.control.layers(layers).addTo(map);
 
+// Start with hybrid view
+hybrid.addTo(map);
+
+
+// Optional layer switcher
+L.control.layers({
+  "Satellite": satellite,
+  "Hybrid": hybrid
+}).addTo(map);
 
 // Add markers by clicking
 map.on('click', function(e){
