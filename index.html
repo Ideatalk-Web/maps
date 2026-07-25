@@ -1,194 +1,239 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ideamaps</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Hybrid Map</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
-    #map {
-      height: 100%;
-      width: 100%;
-    }
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
 
-    .title {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      background: white;
-      padding: 8px 15px;
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.25);
-      font-weight: bold;
-    }
+#map {
+    width: 100%;
+    height: 100vh;
+}
 
-    .info {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      background: white;
-      padding: 10px 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.25);
-      font-size: 14px;
-    }
-  </style>
+.title {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px #0005;
+    font-weight: bold;
+}
+
+.search {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    z-index: 999;
+}
+
+.search input {
+    padding: 10px;
+    width: 180px;
+    border-radius: 8px;
+    border: 1px solid #999;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <div class="title">
-  Ideamaps
+🛰️ My Hybrid Map
+</div>
+
+<div class="search">
+<input id="searchBox" placeholder="Search place">
 </div>
 
 <div id="map"></div>
 
-<div class="info">
-  Tap anywhere on the map to add a marker
-</div>
-
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+
 <script>
 
-const map = L.map('map').setView([39.9334, 32.8597], 6);
+// Create map
+const map = L.map('map').setView(
+    [39.9334, 32.8597],
+    6
+);
 
 
-// Normal map
-const map = L.map('map').setView([39.9334, 32.8597], 6);
+// Street map
+const street = L.tileLayer(
+'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+}
+);
 
 
 // Satellite imagery
 const satellite = L.tileLayer(
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-  {
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+{
     maxZoom: 19,
-    attribution: 'Satellite imagery © Esri'
-  }
+    attribution: 'Satellite © Esri'
+}
 );
 
 
-// Street labels overlay
+// Labels on top of satellite
 const labels = L.tileLayer(
-  'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-  {
+'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Basemap_v2/MapServer/tile/{z}/{y}/{x}',
+{
     maxZoom: 19,
-    transparent: true,
     attribution: 'Labels © Esri'
-  }
+}
 );
 
 
-// Create hybrid layer group
+// Hybrid layer
 const hybrid = L.layerGroup([
-  satellite,
-  labels
+    satellite,
+    labels
 ]);
 
 
-// Start with hybrid view
+// Start with hybrid
 hybrid.addTo(map);
 
 
-// Optional layer switcher
+// Layer buttons
 L.control.layers({
-  "Satellite": satellite,
-  "Hybrid": hybrid
+
+    "Street": street,
+
+    "Satellite": satellite,
+
+    "Hybrid": hybrid
+
 }).addTo(map);
 
-// Add markers by clicking
+
+// Add markers by tapping
 map.on('click', function(e){
 
-  const marker = L.marker([
-    e.latlng.lat,
-    e.latlng.lng
-  ]).addTo(map);
-
-
-  marker.bindPopup(
-    "Location:<br>" +
-    e.latlng.lat.toFixed(5) +
-    ", " +
-    e.latlng.lng.toFixed(5)
-  ).openPopup();
+    L.marker([
+        e.latlng.lat,
+        e.latlng.lng
+    ])
+    .addTo(map)
+    .bindPopup(
+        "Location:<br>" +
+        e.latlng.lat.toFixed(5) +
+        ", " +
+        e.latlng.lng.toFixed(5)
+    )
+    .openPopup();
 
 });
 
 
-// Simple search box
-const search = L.control({position:'topleft'});
+// GPS button
+const locate = L.control({position:'bottomright'});
 
-search.onAdd = function(){
+locate.onAdd = function(){
 
-  const div = L.DomUtil.create('div');
+    const button = L.DomUtil.create('button');
 
-  div.innerHTML = `
-    <input id="searchBox"
-    placeholder="Search location"
-    style="
-    padding:8px;
-    width:180px;
-    border-radius:8px;
-    border:1px solid #aaa;">
-  `;
+    button.innerHTML = "📍";
 
-  return div;
+    button.style.fontSize = "24px";
+    button.style.padding = "8px";
+    button.style.borderRadius = "10px";
+
+    button.onclick = function(){
+
+        map.locate({
+            setView:true,
+            maxZoom:16
+        });
+
+    };
+
+    return button;
+
 };
 
-search.addTo(map);
+locate.addTo(map);
 
 
-document.addEventListener("keydown", function(e){
+// GPS result
+map.on('locationfound', function(e){
 
-  if(e.key === "Enter"){
-
-    const query =
-    document.getElementById("searchBox").value;
-
-    fetch(
-      "https://nominatim.openstreetmap.org/search?format=json&q="
-      + encodeURIComponent(query)
-    )
-    .then(r=>r.json())
-    .then(data=>{
-
-      if(data.length){
-
-        map.setView(
-          [
-            data[0].lat,
-            data[0].lon
-          ],
-          13
-        );
-
-        L.marker([
-          data[0].lat,
-          data[0].lon
-        ])
-        .addTo(map)
-        .bindPopup(data[0].display_name)
-        .openPopup();
-
-      }
-
-    });
-
-  }
+    L.marker(e.latlng)
+    .addTo(map)
+    .bindPopup("You are here")
+    .openPopup();
 
 });
+
+
+// Search
+document
+.getElementById("searchBox")
+.addEventListener("keydown", function(e){
+
+if(e.key === "Enter"){
+
+let query = this.value;
+
+
+fetch(
+"https://nominatim.openstreetmap.org/search?format=json&q="
++ encodeURIComponent(query)
+)
+
+.then(response => response.json())
+
+.then(data => {
+
+if(data.length > 0){
+
+map.setView(
+[
+data[0].lat,
+data[0].lon
+],
+14
+);
+
+
+L.marker([
+data[0].lat,
+data[0].lon
+])
+.addTo(map)
+.bindPopup(data[0].display_name)
+.openPopup();
+
+}
+
+});
+
+
+}
+
+});
+
 
 </script>
 
