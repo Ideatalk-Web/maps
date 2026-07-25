@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Satellite Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+
+    .title {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+      font-weight: bold;
+    }
+
+    .info {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="title">
+  My Satellite Map
+</div>
+
+<div id="map"></div>
+
+<div class="info">
+  Tap anywhere on the map to add a marker
+</div>
+
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+const map = L.map('map').setView([39.9334, 32.8597], 6);
+
+
+// Normal map
+const street = L.tileLayer(
+  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }
+);
+
+
+// Satellite map
+const satellite = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom: 19,
+    attribution: 'Satellite imagery © Esri'
+  }
+);
+
+
+street.addTo(map);
+
+
+// Layer switch button
+const layers = {
+  "Street": street,
+  "Satellite": satellite
+};
+
+L.control.layers(layers).addTo(map);
+
+
+// Add markers by clicking
+map.on('click', function(e){
+
+  const marker = L.marker([
+    e.latlng.lat,
+    e.latlng.lng
+  ]).addTo(map);
+
+
+  marker.bindPopup(
+    "Location:<br>" +
+    e.latlng.lat.toFixed(5) +
+    ", " +
+    e.latlng.lng.toFixed(5)
+  ).openPopup();
+
+});
+
+
+// Simple search box
+const search = L.control({position:'topleft'});
+
+search.onAdd = function(){
+
+  const div = L.DomUtil.create('div');
+
+  div.innerHTML = `
+    <input id="searchBox"
+    placeholder="Search location"
+    style="
+    padding:8px;
+    width:180px;
+    border-radius:8px;
+    border:1px solid #aaa;">
+  `;
+
+  return div;
+};
+
+search.addTo(map);
+
+
+document.addEventListener("keydown", function(e){
+
+  if(e.key === "Enter"){
+
+    const query =
+    document.getElementById("searchBox").value;
+
+    fetch(
+      "https://nominatim.openstreetmap.org/search?format=json&q="
+      + encodeURIComponent(query)
+    )
+    .then(r=>r.json())
+    .then(data=>{
+
+      if(data.length){
+
+        map.setView(
+          [
+            data[0].lat,
+            data[0].lon
+          ],
+          13
+        );
+
+        L.marker([
+          data[0].lat,
+          data[0].lon
+        ])
+        .addTo(map)
+        .bindPopup(data[0].display_name)
+        .openPopup();
+
+      }
+
+    });
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
