@@ -229,6 +229,44 @@ style="width:250px;border-radius:10px;">
 Fun fact: Anıtkabir was the first place Ideamaps added an image on</p>
 `);
 
+const timessquare = L.circle(
+    [40.75798584439642, -73.98546064757286],
+    {
+        radius: 100,
+        color: "transparent",
+        fillColor: "transparent",
+        fillOpacity: 0
+    }
+)
+.addTo(map)
+.bindPopup(`
+<h3>Times Square</h3>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Times_Square_20190726.jpg/960px-Times_Square_20190726.jpg"
+style="width:250px;border-radius:10px;">
+
+<p>Photo: Wikimedia Commons uploaded by the user Nkon21 (CC BY-SA)</p>
+`);
+
+const parthenon = L.circle(
+    [37.97177176610961, 23.726445558530433],
+    {
+        radius: 100,
+        color: "transparent",
+        fillColor: "transparent",
+        fillOpacity: 0
+    }
+)
+.addTo(map)
+.bindPopup(`
+<h3>Parthenon</h3>
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/960px-The_Parthenon_in_Athens.jpg"
+style="width:250px;border-radius:10px;">
+
+<p>Photo: Wikimedia Commons uploaded by the user Steve Swayne (CC BY)</p>
+`);
+
 
 </script>
 
