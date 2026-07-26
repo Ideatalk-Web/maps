@@ -207,25 +207,26 @@ data[0].lon
 
 });
 
-const anitkabir = L.marker([39.9259, 32.8369])
+
+
+const anitkabir = L.circle(
+    [39.9259, 32.8369],
+    {
+        radius: 100,
+        color: "transparent",
+        fillColor: "transparent",
+        fillOpacity: 0
+    }
+)
 .addTo(map)
 .bindPopup(`
 <h3>Anıtkabir</h3>
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Ankara_4372.jpg/960px-Ankara_4372.jpg"
-style="
-width:250px;
-border-radius:10px;
-">
+style="width:250px;border-radius:10px;">
 
-<p>
-Anıtkabir, Ankara, Türkiye
-</p>
-
-<p style="font-size:12px;">
-Photo: Wikimedia Commons uploaded by the user Darwinek<br>
-Licensed under CC BY-SA
-</p>
+<p>Photo: Wikimedia Commons uploaded by the user:Darwinek (CC BY-SA)</p>
+`);
 `);
 
 </script>
