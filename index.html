@@ -104,15 +104,17 @@ const labels = L.tileLayer(
 
 
 
-// Hybrid layer
+
+
+
+// Start with hybrid
+satellite.addTo(map);
+labels.addTo(map);
+//code for hybrid map
 const hybrid = L.layerGroup([
     satellite,
     labels
 ]);
-
-
-// Start with hybrid
-hybrid.addTo(map);
 
 
 // Layer buttons
@@ -122,24 +124,6 @@ L.control.layers({
     "Hybrid": hybrid
 }).addTo(map);
 
-
-// Add markers by tapping
-map.on('click', function(e){
-
-    L.marker([
-        e.latlng.lat,
-        e.latlng.lng
-    ])
-    .addTo(map)
-    .bindPopup(
-        "Location:<br>" +
-        e.latlng.lat.toFixed(5) +
-        ", " +
-        e.latlng.lng.toFixed(5)
-    )
-    .openPopup();
-
-});
 
 
 // GPS button
@@ -212,13 +196,6 @@ data[0].lon
 );
 
 
-L.marker([
-data[0].lat,
-data[0].lon
-])
-.addTo(map)
-.bindPopup(data[0].display_name)
-.openPopup();
 
 }
 
