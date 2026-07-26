@@ -96,10 +96,11 @@ const satellite = L.tileLayer(
 
 
 const labels = L.tileLayer(
-'https://server.arcgisonline.com/ArcGIS/rest/services/World_Reference_Overlay/MapServer/tile/{z}/{y}/{x}',
+'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png',
 {
-    maxZoom: 19,
-    attribution: 'Labels © Esri'
+    subdomains: 'abcd',
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap & CARTO'
 });
 
 
