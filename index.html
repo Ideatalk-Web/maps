@@ -7,6 +7,12 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 
+<div id="viewer" style="width:100%;height:500px;"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/three/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.js"></script>
+
 <style>
 html, body {
     height: 100%;
@@ -206,7 +212,30 @@ data[0].lon
 }
 
 });
+const viewer = new PhotoSphereViewer.Viewer({
+    container: document.querySelector('#viewer'),
+    panorama: 'panorama/street1.jpg'
+});
+const anitkabir = L.marker([39.9259, 32.8369])
+.addTo(map)
+.bindPopup(`
+<h3>Anıtkabir</h3>
 
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Ankara_4372.jpg/960px-Ankara_4372.jpg"
+style="
+width:250px;
+border-radius:10px;
+">
+
+<p>
+Anıtkabir, Ankara, Türkiye
+</p>
+
+<p style="font-size:12px;">
+Photo: Wikimedia Commons uploaded by the user Darwinek<br>
+Licensed under CC BY-SA
+</p>
+`);
 
 </script>
 
